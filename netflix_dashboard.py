@@ -4,7 +4,7 @@ import streamlit as st
 import requests
 from config import TMDB_API_KEY
 # TMDB API Key
-TMDB_API_KEY = "259a0fe1ea08bbe830fee282174c4e42"
+TMDB_API_KEY = "Your_TMDB_API_KEY"
 
 # Page Config
 st.set_page_config(page_title="Netflix Dashboard", layout="wide")
