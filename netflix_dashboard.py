@@ -69,27 +69,31 @@ df = load_data()
 
 # Function to get poster from TMDB
 def get_poster(title):
-    url = f"https://api.themoviedb.org/3/search/movie?api_key={TMDB_API_KEY}&query={title}"
-    response = requests.get(url).json()
-    if response.get('results'):
-        poster_path = response['results'][0].get('poster_path')
-        if poster_path:
-            return f"https://image.tmdb.org/t/p/w200{poster_path}"
+    try:
+        url = f"https://api.themoviedb.org/3/search/movie?api_key={TMDB_API>        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        if data.get('results') and data['results'][0].get('poster_path'):
+            return f"https://image.tmdb.org/t/p/w200{data['results'][0]['po>    except requests.exceptions.RequestException as e:
+        st.error(f"Poster fetch failed for {title}: {e}")
     return None
 
 # Function to get trending titles from TMDB
 def get_trending():
-    url = f"https://api.themoviedb.org/3/trending/all/day?api_key={TMDB_API_KEY}"
-    response = requests.get(url).json()
+    try:
+        url = f"https://api.themoviedb.org/3/trending/all/day?api_key={TMDB>        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+         data = response.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching trending data: {e}")
+        return []
+
     trending_data = []
-    if response.get('results'):
-        for item in response['results'][:15]:  # Top 15 trending
+    if data.get('results'):
+        for item in data['results'][:15]:
             title = item.get('title') or item.get('name')
             poster_path = item.get('poster_path')
-            full_poster_url = f"https://image.tmdb.org/t/p/w200{poster_path}" if poster_path else None
-            trending_data.append({"title": title, "poster": full_poster_url})
-    return trending_data
-
+            full_poster_url = f"https://image.tmdb.org/t/p/w200{poster_path>            trending_data.append({"title": title, "poster": full_poster_url>    return trending_data
 # Title
 st.markdown("<h1>📺 Netflix Data Dashboard</h1>", unsafe_allow_html=True)
 st.markdown("<p style='color:white;'>Explore Netflix Movies and TV Shows</p>", unsafe_allow_html=True)
